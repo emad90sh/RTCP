@@ -1,0 +1,6 @@
+requests
+redis
+fastapi[all]
+uvicorn
+jinja2
+websockets

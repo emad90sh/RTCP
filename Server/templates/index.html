@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/reset.css">
+    <link rel="stylesheet" href="assets/style.css">
+    <title>Live BTC|ETH Price</title>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="main_price" style="margin-top:30px;">
+            <img class="symbol_img" src="assets/btc.png">
+            <h1 class="price">BTCUSDT: <span id="btc_price" style="opacity:1;">...</span></h1>
+        </div>
+        <div class="main_price" style="margin-top: 50px;margin-bottom: 30px;">
+            <img class="symbol_img" src="assets/eth.svg">
+            <h1 class="price">ETHUSDT: <span id="eth_price">...</span></h1>
+        </div>
+    </div>
+</body>
+<script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    async function fadeIn(element) {
+        var el = document.getElementById(element);
+        for(i = 0; i < 5; i++){
+            var opacity = parseFloat(el.style.opacity);
+            opacity += 0.1;
+            el.style.opacity = opacity;
+            
+            await sleep(50);
+        }
+        el.style.opacity = 1;
+    }
+    async function fade(element) {
+        var el = document.getElementById(element);
+        for(i = 0; i < 5; i++){
+            var opacity = el.style.opacity;
+            opacity -= 0.1;
+            el.style.opacity = opacity;
+            await sleep(50);
+        }
+        fadeIn(element);
+    }
+
+    let lastBtc = 0;
+    let lastEth = 0;
+    setInterval(function(){
+        fetch('/price').then(async function(response){
+            const response_json = await response.json();
+            const btcPrice = response_json['data']['btc'];
+            const ethPrice = response_json['data']['eth'];
+            if(lastBtc != btcPrice){
+                const btc_price_element = document.getElementById('btc_price');
+                fade('btc_price');
+                btc_price_element.innerText = `${btcPrice} $`;
+                lastBtc = btcPrice;
+            }
+            if(lastEth != ethPrice){
+                const eth_price_element = document.getElementById('eth_price');
+                eth_price_element.innerText = `${ethPrice} $`;
+                fade('eth_price');
+                lastEth = ethPrice;
+            }
+        })
+    }, 1000)
+</script>
+</html>
