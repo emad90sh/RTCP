@@ -13,7 +13,7 @@ async def main():
     #defind values
     uid = get_random_uid.random_uid()
     ping_msg = {
-        f"id":"{uid}",
+        "id":f"{uid}",
         "type":"ping"
     }
     subscribe_msg = {
